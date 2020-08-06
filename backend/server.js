@@ -1,7 +1,9 @@
 import express from 'express';
+const cors = require('cors')
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 const { promisify } = require('util')
 const creds = require('../credentials.json');
+
 
 const doc = new GoogleSpreadsheet('1QRHjDwPwRxozDFrYJzqLNxEsBhqsnMeYFSM2_SwRT7Q');
 
@@ -63,11 +65,10 @@ function Timeout() {
 }
 
 Timeout()
-
+app.use(cors());
 app.get("/api/excel", (req,res)=>{
     res.send(dadosTratados);
 })
-
 app.listen(process.env.PORT || 5000)
 
 
