@@ -1,0 +1,28 @@
+{
+  "name": "graphicExcel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --watch backend --exec babel-node backend/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.5.0",
+    "docxtemplater": "^3.17.9",
+    "express": "^4.17.1",
+    "file-saver": "^2.0.2",
+    "google-spreadsheet": "^3.0.11",
+    "jszip": "^2.6.1",
+    "jszip-utils": "^0.1.0",
+    "nodemon": "^2.0.4",
+    "react-router-dom": "^5.2.0"
+  }
+}
