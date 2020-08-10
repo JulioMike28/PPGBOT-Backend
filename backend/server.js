@@ -12,6 +12,7 @@ const app = express()
 
 async function accessSpreadsheet() {
     let dados = []
+    let variavel = []
     await doc.useServiceAccountAuth({
       client_email: creds.client_email,
       private_key: creds.private_key,
@@ -28,7 +29,7 @@ async function accessSpreadsheet() {
         
         element._rawData.forEach(el =>{
             if(el != ''){
-                dados.push({coluna: header[i], value: el})
+                variavel.push({coluna: header[i], value: el})
             }else{
                 
             }
@@ -36,7 +37,14 @@ async function accessSpreadsheet() {
         })
         i=0
     })
+    variavel.forEach(el=>{
+      if(el.coluna === "Carimbo de data/hora" || el.coluna === "Nome do registro civil ou nome social:"){
 
+      }else{
+        dados.push(el)
+      }
+    })
+    
     tratar(dados)
     Perspectiva(dados)
 }
@@ -60,6 +68,7 @@ function tratar(dados) {
 function Timeout() {
   setTimeout(()=>{
     console.log('Timeout ativado 30s')
+    dadosPerspectiva=[]
     accessSpreadsheet();
     Timeout()
   },30000)
@@ -82,14 +91,21 @@ function Perspectiva(dados) {
       objeto.Agencia = el.value
     }
     if(objeto.AnoInicio && objeto.AnoTitulacao && objeto.Bolsista && objeto.Agencia){
-      dadosPerspectiva.push(objeto)
-      objeto = {}
+      var igual = dadosPerspectiva.find(dado=>dado === el);
+      if(!igual){
+        dadosPerspectiva.push(objeto)
+        objeto = {}
+      }else{
+        console.log('ja existe elemento.');
+      }
+      
     }
     
   })
 
   console.log(dadosPerspectiva)
 }
+
 
 accessSpreadsheet()
 Timeout()
