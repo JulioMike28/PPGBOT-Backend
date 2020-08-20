@@ -4,6 +4,8 @@ const { GoogleSpreadsheet } = require('google-spreadsheet')
 const { promisify } = require('util')
 const creds = require('../credentials.json');
 
+const docId = '1QRHjDwPwRxozDFrYJzqLNxEsBhqsnMeYFSM2_SwRT7Q'
+const docIdConfig = '1cBXuaO0uxvhJVp58HjxRQJ_aEZGqFsv4nzY1M_aeLcw'
 
 const doc = new GoogleSpreadsheet('1QRHjDwPwRxozDFrYJzqLNxEsBhqsnMeYFSM2_SwRT7Q');
 
@@ -38,7 +40,7 @@ async function accessSpreadsheet() {
         i=0
     })
     variavel.forEach(el=>{
-      if(el.coluna === "Carimbo de data/hora" || el.coluna === "Nome do registro civil ou nome social:"){
+      if(el.coluna === "Carimbo de data/hora" || el.coluna === "Nome do registro civil ou nome social:" || el.coluna === "Data de nascimento (dia, mês, ano):"){
 
       }else{
         dados.push(el)
@@ -115,6 +117,9 @@ app.get("/api/excel", (req,res)=>{
 })
 app.get("/api/perspectiva", (req,res)=>{
   res.send(dadosPerspectiva);
+})
+app.get("/api/docId", (req,res)=>{
+  res.send(docId);
 })
 app.listen(process.env.PORT || 5000)
 
