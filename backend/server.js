@@ -15,6 +15,7 @@ const app = express()
 async function accessSpreadsheet() {
     let dados = []
     let variavel = []
+    let array_md = []
     await doc.useServiceAccountAuth({
       client_email: creds.client_email,
       private_key: creds.private_key,
@@ -40,6 +41,9 @@ async function accessSpreadsheet() {
         i=0
     })
     variavel.forEach(el=>{
+      if(el.coluna=="Nível de Pós-Graduação:"){
+        array_md.push(el)
+      }
       if(el.coluna === "Carimbo de data/hora" || el.coluna === "Nome do registro civil ou nome social:" || el.coluna === "Data de nascimento (dia, mês, ano):"){
 
       }else{
@@ -47,23 +51,32 @@ async function accessSpreadsheet() {
       }
     })
     
-    tratar(dados)
+    tratar(dados,array_md)
     Perspectiva(dados)
 }
   
 let dadosTratados = []
-function tratar(dados) {
+function tratar(dados,array_md) {
     const estados = dados.reduce((obj, {coluna, value}) => {
       if (!obj[coluna]) obj[coluna] = [];
       obj[coluna].push(value);
       return obj;
     }, {});
     
+    let i = 0;
     dadosTratados = Object.keys(estados).map(coluna => {
+      if(coluna=="Idade com que ingressou no curso do PPGBot:" || coluna=="Ano de início no curso do PPGBot:" || coluna=="Ano de Titulação:" || coluna=="Bolsista:" || coluna=="O que gerou sua pesquisa na pós-graduação:"){
+        return{
+          coluna,
+          values: estados[coluna],
+          nivel: array_md
+        }
+      }
       return {
         coluna,
         values: estados[coluna]
       };
+
     });
 }
 
@@ -92,7 +105,10 @@ function Perspectiva(dados) {
     if(el.coluna === "Agência de Fomento:"){
       objeto.Agencia = el.value
     }
-    if(objeto.AnoInicio && objeto.AnoTitulacao && objeto.Bolsista && objeto.Agencia){
+    if(el.coluna=="Nível de Pós-Graduação:"){
+      objeto.Nivel = el.value
+    }
+    if(objeto.AnoInicio && objeto.AnoTitulacao && objeto.Bolsista && objeto.Agencia && objeto.Nivel){
       var igual = dadosPerspectiva.find(dado=>dado === el);
       if(!igual){
         dadosPerspectiva.push(objeto)
@@ -107,6 +123,7 @@ function Perspectiva(dados) {
 
   console.log(dadosPerspectiva)
 }
+
 
 
 accessSpreadsheet()
