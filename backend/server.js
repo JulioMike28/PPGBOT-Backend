@@ -4,10 +4,25 @@ const { GoogleSpreadsheet } = require('google-spreadsheet')
 const { promisify } = require('util')
 const creds = require('../credentials.json');
 
-const docId = '1QRHjDwPwRxozDFrYJzqLNxEsBhqsnMeYFSM2_SwRT7Q'
+//Parametros fixos dos id do form e do config
+let docId = '1QRHjDwPwRxozDFrYJzqLNxEsBhqsnMeYFSM2_SwRT7Q'
 const docIdConfig = '1cBXuaO0uxvhJVp58HjxRQJ_aEZGqFsv4nzY1M_aeLcw'
 
-const doc = new GoogleSpreadsheet('1QRHjDwPwRxozDFrYJzqLNxEsBhqsnMeYFSM2_SwRT7Q');
+
+//Pegar o atual que está presente nas configurações
+
+async function PegarIdAtual( AtualId ) {
+  const docConfig = new GoogleSpreadsheet(AtualId)
+  await docConfig.useServiceAccountAuth({
+      client_email: creds.client_email,
+      private_key: creds.private_key,
+  }); 
+  await docConfig.loadInfo()
+  const sheet = docConfig.sheetsByIndex[0]; // or use doc.sheetsById[id]
+  const rows = await sheet.getRows();
+  docId = rows[0]._rawData[3]
+  return docId
+}
 
 
 const app = express()
@@ -16,6 +31,7 @@ async function accessSpreadsheet() {
     let dados = []
     let variavel = []
     let array_md = []
+    const doc = new GoogleSpreadsheet(docId);
     await doc.useServiceAccountAuth({
       client_email: creds.client_email,
       private_key: creds.private_key,
@@ -82,11 +98,12 @@ function tratar(dados,array_md) {
 
 function Timeout() {
   setTimeout(()=>{
-    console.log('Timeout ativado 30s')
+    console.log('Timeout ativado 10s')
     dadosPerspectiva=[]
+    PegarIdAtual(docIdConfig)
     accessSpreadsheet();
     Timeout()
-  },30000)
+  },10000)
 }
 
 let objeto = {}
@@ -121,11 +138,11 @@ function Perspectiva(dados) {
     
   })
 
-  console.log(dadosPerspectiva)
+  
 }
 
 
-
+PegarIdAtual(docIdConfig)
 accessSpreadsheet()
 Timeout()
 app.use(cors());
