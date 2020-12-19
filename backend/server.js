@@ -98,12 +98,16 @@ function tratar(dados,array_md) {
 
 function Timeout() {
   setTimeout(()=>{
-    console.log('Timeout ativado 10s')
+    console.log('Timeout ativado 20s')
     dadosPerspectiva=[]
-    PegarIdAtual(docIdConfig)
-    accessSpreadsheet();
-    Timeout()
-  },10000)
+    PegarIdAtual(docIdConfig).then(()=>{
+      accessSpreadsheet();
+      Timeout()
+    }).catch(()=>{
+      console.log("problema na extração dos dados...");
+    })
+    
+  },30000)
 }
 
 let objeto = {}
@@ -142,9 +146,13 @@ function Perspectiva(dados) {
 }
 
 
-PegarIdAtual(docIdConfig)
-accessSpreadsheet()
-Timeout()
+PegarIdAtual(docIdConfig).then(()=>{
+  accessSpreadsheet()
+  Timeout()
+}).catch(()=>{
+  console.log("problema na estração dos dados....")
+})
+
 app.use(cors());
 app.get("/api/excel", (req,res)=>{
     res.send(dadosTratados);
